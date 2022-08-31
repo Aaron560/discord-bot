@@ -1,7 +1,5 @@
-# Product Name
-> Short blurb about what your product does.
-
-One to two paragraph statement about your product and what it does.
+#DiscordJS Bot
+> Basic DiscordJS bot.
 
 ![](header.png)
 
@@ -10,15 +8,9 @@ One to two paragraph statement about your product and what it does.
 
 ## Usage example
 
-A few motivating and useful examples of how your product can be used. Spice this up with code blocks and potentially more screenshots.
-
-## Development setup
-
-Describe how to install all development dependencies and how to run an automated test-suite of some kind. Potentially do this for multiple platforms.
-
+currently WIP.
 ## Release History
-
-
+v1.0
 ## Meta
 
 Aaron– [@Twitter](https://twitter.com/Blinker11696) – aaron.ashcraft7@gmail.com
