@@ -11,73 +11,40 @@ const bot = new Client({
         Intents.FLAGS.GUILDS, 
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.GUILD_MEMBERS
-	]
+	],
 });
 
 const fs = require('fs');
 
 bot.commands = new Collection();
 
-bot.once("ready", () => {
-    bot.user.setStatus("online")
-    bot.user.setActivity(".Help" + bot.guilds.size)
-    console.log("Online!")
-});
+const commandsFile = fs.readdirSync('./commands').filter(f => !f.endsWith('.js'))
 
+for (const file of commandsFile) {
+    const prop = require(`./commands/${file}`) 
+    console.log(`${file} Is loaded.`) 
+    bot.commands.set(prop.config.name, prop)}
 
-bot.on('ready', () => {
-    bot.user.setActivity(".help | residing on " + bot.guilds.size + " Servers", { type: 'WATCHING' })
-});
-    
-bot.on("message", message => {
-    
-    if(message.author.bot) return;
-    if(message.channel.type === "dm") return;
+const commandsSubFolder = fs.readdirSync('./commands').filter(f => !f.endsWith('.js'))
 
-    let messageArray = message.content.split(" ");
-    let command = messageArray[0];
-    let args = messageArray.slice(1);
-    
-    if(!command.startsWith(prefix)) return;
-    if(command === `${prefix}userinfo`) {
-        const embed = new RichEmbed()
-        .setAuthor(message.author.username)
-        .setColor("#5ED315")
-        .setThumbnail( `${message.author.avatarURL}`)
-        .addField("Name", `${message.author.username}#${message.author.discriminator}`)
-        .addField("ID", message.author.id)
-
-        message.reply("check dms");
-        message.channel.send({embed}); 
-
-    }; 
-
-
-    if("command" === `${prefix}help`) {
-        let embed = new RichEmbed()
-        embed.addField(".help", "gives you this current information")
-        .setTitle("help")
-        .setColor("#5ED315")
-        .addField(".user", "gives you info about a user(currently being worked on)")
-        .addField(".server","gives you info about a server(currently working on it)") 
-        .addField("link to support server","https://discord.gg/cRJk74kDvj")
-        .addField("invite link for bot","https://discord.com/api/oauth2/authorize?client_id=771489748651868173&permissions=8&scope=bot")
-    };
-    message.reply("here's a list of commands that i'm able to do")
-    message.channel.send({embed});
-    messageArray = message.content.split("");
-    
-    command = messageArray[0];
-    if(command === `${prefix}serverinfo`) {
-            let embed = new RichEmbed()
-            .setAuthor(message.author.username)
-            .setColor("#5ED315")
-            .addField("Name", `${message.guild.name}`)
-            .addField("Owner", `${message.guild.owner.user}`)
-            .addField("Server ID" , message.guild.id)
-            .addField("User Count", `${message.guild.members.filter(m => m.presence.status !== 'offline').size} / ${message.guild.memberCount}`)
-            .addField("Roles", `${message.guild.roles.size}`);
-            message.channel.send({embed});
-        };
+commandsSubFolder.forEach(folder => 
+    {const commandsFile = fs.readdirSync(`./commands/${folder}`)
+    .filter(f => f.endsWith('.js')) 
+    for(const file of commandsFile) { 
+        const prop = require(`./commands/${folder}/${file}`) 
+        console.log(`${file} Is loaded from ${folder}`) 
+        bot.commands.set(prop.config.name, prop)}
     });
+
+    const eventFiles = fs.readdirSync('./events/').filter(f => f.endsWith('.js'))
+
+    for (const file of eventFiles) {
+        const event = require(`./events/${file}`)
+        if(event.once) {
+            bot.once(event.name, (...args) => event.execute(...args, bot))
+        } else {
+            bot.on(event.name, (...args) => event.execute(...args, bot))
+        }
+    }
+    
 bot.login(token);
