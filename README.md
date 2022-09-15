@@ -8,7 +8,7 @@
 
 ## Usage example
 
-currently WIP.
+currently WIP. Do not use
 ## Release History
 v1.0
 ## Meta
